@@ -1,7 +1,7 @@
 // Lets the game work offline once installed. The core files are saved at install;
 // voice clips are saved the first time each one plays.
 // Raise VERSION whenever game files change so players get the update.
-const VERSION = 'glam-v1';
+const VERSION = 'glam-v2';
 const CORE = ['./', 'index.html', 'game.js', 'words.js', 'voice.js', 'manifest.json', 'icons/icon-180.png', 'icons/icon-192.png', 'icons/icon-512.png'];
 
 self.addEventListener('install', e => {

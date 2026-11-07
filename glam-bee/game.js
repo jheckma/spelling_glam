@@ -358,10 +358,12 @@ function erase() {
 
 const multiplier = () => Math.min(5, 1 + Math.floor(G.streak / 3));
 
-/* ---------- Glam-ups: every correct word in a bee adds one more piece of her look ---------- */
+/* ---------- Glam-ups: every correct word in a bee adds more of her look ---------- */
+// A perfect bee always ends in full glam (the tiara): in a bee shorter than the 12 glam items,
+// some words earn two items at once; in a longer bee, each word earns one until she is fully glammed.
 const MAX_POWER = ITEMS.length;
-const power = () => Math.min(MAX_POWER, G.cleared);
-const upgradeMessage = p => ITEMS[p - 1].msg || ITEMS[p - 1].name.toUpperCase() + '!';
+const power = () => Math.min(MAX_POWER, G.total && G.total < MAX_POWER ? Math.round((G.cleared * MAX_POWER) / G.total) : G.cleared);
+const itemMessage = i => ITEMS[i].msg || ITEMS[i].name.toUpperCase() + '!';
 const commonPrefix = (a, b) => { let i = 0; while (i < a.length && a[i] === b[i]) i++; return i; };
 // Judge against whichever accepted spelling the player came closest to.
 const closestForm = (e, typed) => forms(e).map(norm).reduce((a, b) => (commonPrefix(typed, b) > commonPrefix(typed, a) ? b : a));
@@ -393,17 +395,24 @@ function launchSpark(i, count, bad) {
 }
 
 function wordCleared(e, form) {
+  const before = power();
   G.cleared++; G.streak++;
+  const after = power();
   const timeBonus = G.duration ? Math.round(50 * Math.max(0, 1 - G.t / G.duration)) : 0;
   const gained = (100 + 10 * G.typed.length) * multiplier() + timeBonus;
   G.score += gained;
   G.screen = 'clearing';
   const [fx0, fy0] = toScreen(0, 0);
-  burst(fx0, fy0, 40, { kind: 'heart', colors: ['#ff4f9a', '#ff8cc6', '#ffd36e'], speed: 380 });
-  burst(fx0, fy0, 50, { kind: 'spark', colors: ['#ffffff', '#ffd36e', '#ff9ad5', '#c9a0ff'], speed: 460 });
-  burst(fx0, fy0, 18, { kind: 'gem', speed: 420 });
+  floaters.length = 0; // the last word's messages give way, so nothing piles up
+  // Celebrate around her, not on her face, so the new glam is easy to see.
+  for (const side of [-1, 1]) {
+    const [bx, by] = toScreen(side * 170, -60);
+    burst(bx, by, 14, { kind: 'heart', colors: ['#ff4f9a', '#ff8cc6', '#ffd36e'], speed: 260 });
+    burst(bx, by, 8, { kind: 'gem', speed: 300 });
+  }
+  burst(fx0, fy0 - 190 * girl.k, 24, { kind: 'spark', colors: ['#ffffff', '#ffd36e', '#ff9ad5', '#c9a0ff'], speed: 320 });
   disco.boost = 1;
-  floaters.push({ x: W / 2, y: fy0 - 40, text: `SLAY! +${gained}`, life: 1.3 });
+  floaters.push({ x: W / 2, y: fy0 - 175 * girl.k, text: `SLAY! +${gained}`, life: 1.6 });
   sfx.win(); sfx.twinkle();
   const clips = [line(pick('correct', 6))];
   if (G.clown) { // a correct word wipes the clown makeup off
@@ -413,10 +422,14 @@ function wordCleared(e, form) {
     floaters.push({ x: W / 2, y: fy0 + 60 * girl.k, text: 'CLOWN MAKEUP WIPED OFF!', life: 2, color: '#9ff5d0' });
     clips.push(line('wipe'));
   }
-  if (G.cleared <= MAX_POWER) {
-    const it = ITEMS[G.cleared - 1], [ix, iy] = toScreen(...it.at);
-    setTimeout(() => burst(ix, iy, 34, { kind: 'spark', colors: ['#ffffff', '#ffd36e', '#ff8cc6'], speed: 160 }), 350);
-    floaters.push({ x: W / 2, y: fy0 + 110 * girl.k, text: upgradeMessage(G.cleared), life: 2.2, color: '#ffd36e' });
+  if (after > before) {
+    // Sparkles land right where each new piece appears.
+    for (let i = before; i < after; i++) {
+      const [ix, iy] = toScreen(...ITEMS[i].at);
+      setTimeout(() => burst(ix, iy, 26, { kind: 'spark', colors: ['#ffffff', '#ffd36e', '#ff8cc6'], speed: 120 }), 300 + (i - before) * 250);
+    }
+    const msg = ITEMS.slice(before, after).map((_, j) => itemMessage(before + j)).join(' + ');
+    floaters.push({ x: W / 2, y: fy0 + 215 * girl.k, text: `LEVEL ${after + 1}: ${msg}`, life: 2.4, color: '#ffd36e' });
     girl.glow = 1;
     sfx.powerup();
   }
@@ -482,7 +495,7 @@ function endMission(won, quit) {
   $('overTitle').textContent = won ? 'Slay, queen! You are the champion!' : quit ? 'Bee ended' : 'Out of hearts!';
   $('overTag').textContent = isBest && G.score > 0 ? 'New high score for this list!' : `High score for this list: ${best}`;
   const attempted = G.cleared + G.missed.length;
-  $('overStats').innerHTML = [['SCORE', G.score], ['ROUND REACHED', roundOf(Math.max(G.wordNo, 1))], ['WORDS CORRECT', `${G.cleared} / ${attempted}`], ['GLAM', `${power()} / ${MAX_POWER}`]]
+  $('overStats').innerHTML = [['SCORE', G.score], ['ROUND REACHED', roundOf(Math.max(G.wordNo, 1))], ['WORDS CORRECT', `${G.cleared} / ${attempted}`], ['GLAM LEVEL', power() >= MAX_POWER ? 'MAX' : power() + 1]]
     .map(([k, v]) => `<div><small>${k}</small>${v}</div>`).join('');
   const missed = G.missed;
   $('missHead').classList.toggle('hidden', !missed.length);
@@ -541,7 +554,7 @@ function renderSlots() {
 function renderHud() {
   $('score').textContent = G.score;
   $('combo').textContent = '×' + multiplier();
-  $('power').textContent = `${power()}/${MAX_POWER}`;
+  $('power').textContent = power() >= MAX_POWER ? 'MAX' : 'Lv ' + (power() + 1);
   $('left').textContent = `${roundOf(Math.max(G.wordNo, 1))} · word ${G.wordNo}/${G.total}`;
   $('shields').textContent = '♥'.repeat(Math.max(0, G.lives)) + '♡'.repeat(Math.max(0, DIFFS[G.diff].lives - G.lives));
   $('soundBtn').textContent = soundOn ? 'Sound on' : 'Sound off';
