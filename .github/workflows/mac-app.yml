@@ -1,0 +1,34 @@
+# Builds the Mac app on a GitHub Mac machine and attaches Spelling-Glam.dmg / .zip to the "latest" release,
+# so the download page's button always gets the newest version.
+name: Build Mac app
+
+on:
+  push:
+    branches: [main]
+    paths: ['glam-bee/**', 'mac-app/**', '.github/workflows/mac-app.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  mac:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Build
+        working-directory: mac-app
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: 'false' # no Apple signing certificate; see the download page for the first-open steps
+        run: |
+          npm install
+          npm run dist
+      - name: Publish to the "latest" release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release view latest >/dev/null 2>&1 || gh release create latest --title "Spelling Glam for Mac" --notes "Download Spelling-Glam.dmg, open it, and drag Spelling Glam into Applications."
+          gh release upload latest mac-app/dist/Spelling-Glam.dmg mac-app/dist/Spelling-Glam.zip --clobber

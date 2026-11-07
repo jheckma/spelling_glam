@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Spelling Glam">
+<meta name="theme-color" content="#3a0f3f">
+<meta name="format-detection" content="telephone=no">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/png" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<title>Spelling Glam!!!</title>
+<style>
+:root{--bg:#3a0f3f;--panel:#4a1450f0;--line:#a34c96;--ink:#fff3fb;--dim:#f0bfe2;--pink:#ff6fb5;--mint:#8ff5c8;--red:#ff5c7c;--gold:#ffd36e;--ice:#bff3ff}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family:"Trebuchet MS","Segoe UI",system-ui,-apple-system,Roboto,sans-serif;overflow:hidden;overscroll-behavior:none}
+/* Touch screens: no double-tap zoom, no text selection or long-press menus, no gray tap flash */
+body{position:fixed;inset:0;touch-action:manipulation;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%}
+canvas{position:fixed;inset:0;width:100%;height:100%;display:block}
+button,select{font:inherit;color:inherit}
+button{cursor:pointer;touch-action:manipulation}
+button:focus-visible,select:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.hidden{display:none!important}
+
+/* In-game HUD */
+#hud{position:fixed;top:0;left:0;right:0;display:flex;align-items:center;gap:18px;padding:calc(10px + env(safe-area-inset-top)) calc(16px + env(safe-area-inset-right)) 10px calc(16px + env(safe-area-inset-left));font-weight:700;pointer-events:none;background:linear-gradient(#2a0a2ee6,#2a0a2e00)}
+#hud small{display:block;font-size:11px;letter-spacing:.12em;color:var(--dim);font-weight:600}
+#hud .stat{font-size:20px;font-variant-numeric:tabular-nums}
+#hud .spacer{flex:1}
+#shields{color:var(--pink);letter-spacing:3px;font-size:20px}
+#hud button{pointer-events:auto;white-space:nowrap;background:#5a1a5e;border:1px solid var(--line);border-radius:999px;padding:6px 14px;font-weight:600}
+#panel{position:fixed;left:0;right:0;bottom:0;padding:10px 16px calc(12px + env(safe-area-inset-bottom));text-align:center;background:linear-gradient(transparent,#2a0a2ef2 22%)}
+#slots{display:flex;justify-content:center;flex-wrap:nowrap;gap:var(--gap,6px);margin:0 auto 8px;min-height:calc(var(--slot,46px)*1.15)}
+/* Each typed letter sits on a shiny cut diamond */
+.slot{position:relative;width:var(--slot,46px);height:calc(var(--slot,46px)*1.15);display:flex;align-items:flex-start;justify-content:center;padding-top:calc(var(--slot,46px)*.1);font-weight:900;font-size:calc(var(--slot,46px)*.5);clip-path:polygon(22% 0,78% 0,100% 32%,50% 100%,0 32%)}
+.slot.on{color:#3a0f3f;background:linear-gradient(135deg,#ffffff 0%,#bff3ff 30%,#ffffff 45%,#c7b3ff 70%,#7fd0ff 100%);background-size:200% 200%;animation:shine 2.4s linear infinite}
+.slot.on::after{content:"";position:absolute;inset:0;background:linear-gradient(115deg,transparent 40%,rgba(255,255,255,.9) 50%,transparent 60%);background-size:300% 100%;animation:glint 2.8s ease-in-out infinite}
+.slot.next{background:linear-gradient(135deg,#ff6fb555,#ffd36e44);animation:pulse 1s ease-in-out infinite alternate}
+@keyframes shine{to{background-position:200% 200%}}
+@keyframes glint{0%{background-position:100% 0}60%,100%{background-position:-100% 0}}
+@keyframes pulse{to{opacity:.45}}
+@media (prefers-reduced-motion:reduce){.slot.on,.slot.on::after,.slot.next{animation:none}}
+.sep{width:calc(var(--slot,46px)*.4);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:calc(var(--slot,46px)*.62);color:var(--dim)}
+#strikes{height:18px;font-size:13px;color:var(--dim);margin-bottom:6px}
+#actions{display:flex;justify-content:center;gap:10px;flex-wrap:wrap}
+.act{background:#5a1a5e;border:1px solid var(--line);border-radius:999px;padding:9px 18px;font-weight:700}
+.act kbd{font:inherit;font-size:12px;color:var(--gold);margin-left:6px}
+.act:hover{background:#73267a}
+.act.fire{background:linear-gradient(90deg,#ff3d8b,#c44cff);border-color:#ffc4e4}
+.act.fire:hover{filter:brightness(1.12)}
+.spell{font-size:20px;font-weight:700;margin:0 0 10px;color:var(--dim);overflow-wrap:anywhere}
+.spell .ok{color:var(--mint)}
+.spell .bad{color:var(--red);text-decoration:underline}
+#defbox{max-width:760px;margin:0 auto 8px;font-size:17px;line-height:1.35;color:var(--ink)}
+#defbox i{color:var(--gold)}
+#defbox:empty{display:none}
+#keys{margin-top:8px;display:flex;flex-direction:column;gap:5px;align-items:center;user-select:none;-webkit-user-select:none}
+#keys div{display:flex;gap:4px;justify-content:center;width:100%}
+#keys button{flex:1 1 0;max-width:46px;height:44px;padding:0;border-radius:9px;background:#62206a;border:1px solid var(--line);font-weight:700;font-size:17px}
+#keys button:active{background:var(--pink);color:#2a0a2e}
+
+/* Screens */
+.screen{position:fixed;inset:0;display:flex;align-items:flex-start;justify-content:center;padding:calc(24px + env(safe-area-inset-top)) 16px calc(24px + env(safe-area-inset-bottom));overflow-y:auto;-webkit-overflow-scrolling:touch;background:#2a0a2e88}
+#reveal{align-items:flex-end;background:transparent}
+#reveal .card{margin:auto auto 0}
+.card{width:100%;max-width:760px;margin:auto;background:var(--panel);border:1px solid var(--line);border-radius:22px;padding:24px;box-shadow:0 10px 40px #0006}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
+#titleFx{position:static;display:block;width:100%;height:190px}
+h2{margin:0 0 8px;font-size:28px}
+.tag{margin:8px 0 18px;color:var(--dim);font-size:17px}
+h3{margin:18px 0 8px;font-size:13px;letter-spacing:.12em;color:var(--dim);text-transform:uppercase}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(205px,1fr));gap:8px}
+.pick{text-align:left;background:#5a1a5e;border:2px solid var(--line);border-radius:14px;padding:9px 12px}
+.pick b{display:block}
+.pick span{font-size:13px;color:var(--dim)}
+.pick[aria-pressed=true]{border-color:var(--gold);background:#7a2a7e;box-shadow:0 0 14px #ff6fb566}
+.pick .sw{float:right;display:flex;gap:3px;margin-top:2px}
+.pick .sw em{display:block;width:16px;height:16px;border-radius:50%;border:1px solid #fff8}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.go{display:block;width:100%;margin-top:20px;padding:14px;font-size:22px;font-weight:900;letter-spacing:.06em;color:#3a0f3f;background:linear-gradient(90deg,#ffd36e,#ff8cc6,#c9a0ff);border:0;border-radius:999px}
+.go:hover{filter:brightness(1.08)}
+.big{font-size:clamp(30px,7vw,48px);font-weight:900;letter-spacing:.05em;color:var(--gold);overflow-wrap:anywhere}
+.misses{list-style:none;margin:0;padding:0;max-height:34vh;overflow-y:auto}
+.misses li{display:flex;gap:10px;align-items:baseline;padding:6px 0;border-bottom:1px solid var(--line)}
+.misses button{background:none;border:0;padding:0 4px;font-size:17px}
+.misses b{white-space:nowrap}
+.misses span{font-size:14px;color:var(--dim)}
+.stats{display:flex;gap:26px;flex-wrap:wrap;font-size:26px;font-weight:800;margin:10px 0}
+.stats small{display:block;font-size:12px;letter-spacing:.1em;color:var(--dim);font-weight:600}
+@media (max-width:640px){
+#titleFx{height:210px}
+#hud{gap:10px;padding:6px 10px;flex-wrap:wrap}
+#hud small{font-size:9px}
+#hud .stat{font-size:15px}
+#shields{font-size:15px}
+#hud button{padding:3px 8px;font-size:13px}
+.act{padding:7px 12px;font-size:14px}
+}
+@media (pointer:coarse){.act kbd{display:none}}
+.touch .act kbd{display:none}
+.touch #hud button{min-height:40px;padding:6px 14px}
+/* Tablets (iPad): bigger keys and buttons for fingers */
+@media (min-width:700px) and (min-height:600px){
+.touch #keys{gap:7px}
+.touch #keys div{gap:7px}
+.touch #keys button{max-width:72px;height:58px;font-size:24px;border-radius:12px}
+.touch .act{padding:12px 20px;font-size:17px;min-height:48px}
+.touch .pick{padding:12px 14px}
+}
+@media (max-height:560px){#keys button{height:34px}}
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+
+<div id="hud" class="hidden">
+  <div><small>SCORE</small><span class="stat" id="score">0</span></div>
+  <div><small>STREAK BONUS</small><span class="stat" id="combo">×1</span></div>
+  <div><small>ROUND</small><span class="stat" id="left">0</span></div>
+  <div><small>HEARTS</small><span id="shields"></span></div>
+  <div><small>GLAM</small><span class="stat" id="power" style="color:var(--gold)">0/12</span></div>
+  <div class="spacer"></div>
+  <button id="musicBtn" type="button">Music on</button>
+  <button id="soundBtn" type="button">Sound on</button>
+  <button id="pauseBtn" type="button">Pause</button>
+</div>
+
+<div id="panel" class="hidden">
+  <div id="defbox" aria-live="polite"></div>
+  <div id="slots" aria-hidden="true"></div>
+  <div id="strikes"></div>
+  <div id="actions">
+    <button class="act" id="sayBtn" type="button">🔊 Hear word <kbd>Space</kbd></button>
+    <button class="act" id="defBtn" type="button">📖 Definition &amp; part of speech <kbd>1</kbd></button>
+    <button class="act" id="eraseBtn" type="button">⌫ Erase <kbd>Backspace</kbd></button>
+    <button class="act fire" id="fireBtn" type="button">💎 Glam it! <kbd>Enter</kbd></button>
+  </div>
+  <div id="keys" class="hidden"></div>
+</div>
+
+<section id="menu" class="screen">
+  <div class="card">
+    <h1 class="sr">Spelling Glam!!!</h1>
+    <canvas id="titleFx" aria-hidden="true"></canvas>
+    <p class="tag">Time to glam up! These are real words from the 2026 Scripps National Spelling Bee. Listen to the word, spell it, then press Glam it! Your spelling is only judged when you glam it. Every correct word adds more glam: lip gloss, blush, earrings, face gems, all the way up to a tiara. Miss a word and… honk honk, clown makeup!</p>
+    <h3>Word list</h3>
+    <div class="grid" id="lists"></div>
+    <h3>Bee rules</h3>
+    <div class="grid" id="diffs"></div>
+    <h3>Bee length</h3>
+    <div class="grid" id="lengths"></div>
+    <h3>Your glam girl</h3>
+    <div class="grid" id="looks"></div>
+    <div class="row" style="margin-top:16px">
+      <button class="act" id="testVoice" type="button">🔊 Hear her voice</button>
+      <button class="act" id="menuMusicBtn" type="button">🎵 Music on</button>
+    </div>
+    <button class="go" id="start" type="button">TIME TO GLAM UP!</button>
+  </div>
+</section>
+
+<section id="reveal" class="screen hidden">
+  <div class="card">
+    <h2 id="revealTitle"></h2>
+    <p id="revealSpell" class="spell"></p>
+    <div class="big" id="revealWord"></div>
+    <p id="revealDef" class="tag"></p>
+    <p class="tag" id="revealAgain"></p>
+    <button class="go" id="revealGo" type="button">CONTINUE</button>
+  </div>
+</section>
+
+<section id="pause" class="screen hidden">
+  <div class="card">
+    <h2>Paused</h2>
+    <p class="tag">The mirror will wait for you.</p>
+    <button class="go" id="resume" type="button">RESUME</button>
+    <button class="act" id="quit" type="button" style="margin-top:12px">End the bee</button>
+  </div>
+</section>
+
+<section id="over" class="screen hidden">
+  <div class="card">
+    <h2 id="overTitle"></h2>
+    <p class="tag" id="overTag"></p>
+    <div class="stats" id="overStats"></div>
+    <h3 id="missHead">Words to practice</h3>
+    <ul class="misses" id="missList"></ul>
+    <button class="go" id="again" type="button">GLAM AGAIN</button>
+    <button class="act" id="toMenu" type="button" style="margin-top:12px">Change bee</button>
+  </div>
+</section>
+
+<script src="words.js"></script>
+<script src="voice.js"></script>
+<script src="game.js"></script>
+</body>
+</html>

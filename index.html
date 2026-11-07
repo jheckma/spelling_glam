@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Spelling Glam!!!</title>
+<meta name="description" content="A glam spelling bee game with the real words from the 2026 Scripps National Spelling Bee. For Mac, iPad and any browser.">
+<link rel="icon" type="image/png" href="glam-bee/icons/icon-192.png">
+<style>
+:root{--bg:#3a0f3f;--card:#4a1450;--line:#a34c96;--ink:#fff3fb;--dim:#f0bfe2;--gold:#ffd36e;--pink:#ff6fb5}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(ellipse at 50% 0,#7a2a6e,#3a0f3f 60%) fixed,var(--bg);color:var(--ink);font-family:"Trebuchet MS","Segoe UI",system-ui,sans-serif;line-height:1.5}
+main{max-width:960px;margin:0 auto;padding:40px 16px 64px}
+header{text-align:center}
+header img{width:96px;height:96px;border-radius:22px;box-shadow:0 8px 30px #ff6fb566}
+h1{margin:14px 0 4px;font-size:clamp(40px,9vw,72px);line-height:1;font-weight:900;background:linear-gradient(180deg,#fff0fa,#ff7ac0 55%,#ffd36e);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 14px #ff4fa088)}
+.lede{max-width:640px;margin:10px auto 26px;color:var(--dim);font-size:19px}
+.buttons{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:14px 26px;border-radius:999px;font-weight:900;font-size:19px;text-decoration:none}
+.btn.main{color:#3a0f3f;background:linear-gradient(90deg,#ffd36e,#ff8cc6,#c9a0ff)}
+.btn.alt{color:var(--ink);background:#5a1a5e;border:1px solid var(--line)}
+.btn:hover{filter:brightness(1.08)}
+.small{font-size:14px;color:var(--dim);margin-top:10px;text-align:center}
+.shots{display:grid;grid-template-columns:1.5fr 1.5fr 1fr;gap:12px;margin:36px 0}
+.shots img{width:100%;height:100%;object-fit:cover;border-radius:16px;border:1px solid var(--line)}
+@media (max-width:700px){.shots{grid-template-columns:1fr}}
+section{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:20px 24px;margin:16px 0}
+h2{margin:0 0 8px;font-size:24px;color:var(--gold)}
+ol,ul{margin:8px 0;padding-left:22px}
+li{margin:4px 0}
+a{color:#ffc4e4}
+kbd{background:#2a0a2e;border:1px solid var(--line);border-radius:6px;padding:1px 6px;font:inherit;font-size:.9em}
+footer{text-align:center;color:var(--dim);font-size:14px;margin-top:30px}
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <img src="glam-bee/icons/icon-192.png" alt="">
+    <h1>Spelling Glam!!!</h1>
+    <p class="lede">Time to glam up! Spell the real words from the <b>2026 Scripps National Spelling Bee</b>. Every correct word adds more glam: lip gloss, blush, earrings, face gems, all the way up to a tiara. Miss one and… honk honk, clown makeup!</p>
+    <div class="buttons">
+      <a class="btn main" href="https://github.com/jheckma/spelling_glam/releases/latest/download/Spelling-Glam.dmg">💎 Download for Mac</a>
+      <a class="btn alt" href="glam-bee/index.html">✨ Play in your browser</a>
+    </div>
+    <p class="small">Mac app works on Apple Silicon and Intel Macs. Free, no ads, works offline.</p>
+  </header>
+
+  <div class="shots">
+    <img src="site/glam.jpg" alt="The girl at her lighted vanity mirror with full glam: tiara, bow, earrings and pearls">
+    <img src="site/clown.jpg" alt="After a missed word she gets clown makeup: red nose, rainbow wig and painted smile">
+    <img src="site/ipad.jpg" alt="The game on an iPad with the on-screen keyboard">
+  </div>
+
+  <section>
+    <h2>Install on a Mac</h2>
+    <ol>
+      <li>Click <b>Download for Mac</b> and open <b>Spelling-Glam.dmg</b>.</li>
+      <li>Drag <b>Spelling Glam</b> into the <b>Applications</b> folder.</li>
+      <li>The first time only: Control-click (or right-click) Spelling Glam in Applications, choose <b>Open</b>, then click <b>Open</b> again.
+        On newer macOS, if it still won't open, go to <b>System Settings → Privacy &amp; Security</b>, scroll down, and click <b>Open Anyway</b>.
+        (This is needed because the app is free and not registered with Apple.)</li>
+    </ol>
+    <p class="small" style="text-align:left">No download? You can also open <a href="glam-bee/index.html">the browser version</a> in Safari and choose <b>File → Add to Dock</b>, which makes it an app too.</p>
+  </section>
+
+  <section>
+    <h2>Play on an iPad</h2>
+    <ol>
+      <li>Open this page in <b>Safari</b> on the iPad and tap <b>Play in your browser</b>.</li>
+      <li>Tap the <b>Share</b> button, then <b>Add to Home Screen</b>. It gets its own icon, opens full screen, and keeps working offline.</li>
+    </ol>
+  </section>
+
+  <section>
+    <h2>How to play</h2>
+    <ul>
+      <li>Listen to the word (<kbd>Space</kbd> to hear it again), type the spelling, then press <b>Glam it!</b> (<kbd>Enter</kbd>).</li>
+      <li>Need a hint? <b>Definition &amp; part of speech</b> (<kbd>1</kbd>).</li>
+      <li>Like a real bee, you only find out if you are right after you glam it.</li>
+      <li>Pick a word list (Round 1, Quarterfinals, Semifinals &amp; Finals, or the Championship Spell-off), the bee rules, and your glam girl's look.</li>
+      <li>Words you miss go to the <b>Touch-up Station</b> list so you can practice them.</li>
+    </ul>
+  </section>
+
+  <footer>Words from the 2026 Scripps National Spelling Bee round results at spellingbee.com. This is a fan-made practice game and isn't affiliated with Scripps.</footer>
+</main>
+</body>
+</html>

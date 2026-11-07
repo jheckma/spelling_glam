@@ -1,0 +1,11 @@
+{
+  "appId": "com.example.spellingglam",
+  "appName": "Spelling Glam",
+  "webDir": "www",
+  "backgroundColor": "#3a0f3f",
+  "ios": {
+    "contentInset": "never",
+    "allowsLinkPreview": false,
+    "scrollEnabled": false
+  }
+}

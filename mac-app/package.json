@@ -1,0 +1,30 @@
+{
+  "name": "spelling-glam",
+  "productName": "Spelling Glam",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Spelling Glam!!! as a Mac app: a glam spelling bee with the 2026 Scripps words.",
+  "main": "main.js",
+  "scripts": {
+    "copy": "node copy-game.js",
+    "start": "npm run copy && electron .",
+    "dist": "npm run copy && electron-builder --mac dmg zip --universal"
+  },
+  "devDependencies": {
+    "electron": "33.2.1",
+    "electron-builder": "25.1.8"
+  },
+  "build": {
+    "appId": "io.github.jheckma.spellingglam",
+    "productName": "Spelling Glam",
+    "artifactName": "Spelling-Glam.${ext}",
+    "files": ["main.js", "game/**/*"],
+    "mac": {
+      "category": "public.app-category.educational-games",
+      "icon": "build/icon.png",
+      "identity": "-",
+      "target": ["dmg", "zip"]
+    },
+    "dmg": { "title": "Spelling Glam" }
+  }
+}

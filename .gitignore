@@ -1,0 +1,7 @@
+node_modules/
+mac-app/game/
+mac-app/build/
+mac-app/dist/
+glam-bee/ipad-app/www/
+glam-bee/ipad-app/ios/
+.DS_Store
