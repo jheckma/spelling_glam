@@ -57,11 +57,11 @@ footer{text-align:center;color:var(--dim);font-size:14px;margin-top:30px}
     <ol>
       <li>Click <b>Download for Mac</b> and open <b>Spelling-Glam.dmg</b>.</li>
       <li>Drag <b>Spelling Glam</b> into the <b>Applications</b> folder.</li>
-      <li>The first time only: Control-click (or right-click) Spelling Glam in Applications, choose <b>Open</b>, then click <b>Open</b> again.
-        On newer macOS, if it still won't open, go to <b>System Settings → Privacy &amp; Security</b>, scroll down, and click <b>Open Anyway</b>.
-        (This is needed because the app is free and not registered with Apple.)</li>
+      <li>Open it. The first time, the Mac says it <i>can't verify the app is free of malware</i>. That's normal for free apps that aren't registered with Apple. Click <b>Done</b>.</li>
+      <li>Go to <b>System Settings → Privacy &amp; Security</b>, scroll to the bottom, and click <b>Open Anyway</b> next to "Spelling Glam was blocked". Enter your password and click <b>Open Anyway</b> again. From then on it opens normally.</li>
     </ol>
-    <p class="small" style="text-align:left">No download? You can also open <a href="glam-bee/index.html">the browser version</a> in Safari and choose <b>File → Add to Dock</b>, which makes it an app too.</p>
+    <p class="small" style="text-align:left">Comfortable with Terminal? Instead of step 4 you can run<br><kbd>xattr -dr com.apple.quarantine "/Applications/Spelling Glam.app"</kbd></p>
+    <p class="small" style="text-align:left"><b>Easiest, with no warnings at all:</b> open <a href="glam-bee/index.html">the browser version</a> in Safari and choose <b>File → Add to Dock</b>. It becomes an app with its own icon and updates itself.</p>
   </section>
 
   <section>
